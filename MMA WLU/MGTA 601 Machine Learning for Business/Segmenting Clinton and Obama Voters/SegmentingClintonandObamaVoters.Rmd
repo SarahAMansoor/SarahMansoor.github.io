@@ -1,0 +1,393 @@
+---
+title: "Assignment 1 - Segmenting Clinton and Obama Voters"
+author: "Sarah Mansoor"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+## The Data
+
+What data do you have access to? Any adjustments/changes you made to prepare the data for your analysis. What other data you may need to improve your analysis?
+
+The data consists of 41 variables and 2868 observations. The data contains variables relating to number of votes, geographic details, election details, age details, education details, race details, employment and income details, and population details (see Appendix A). The columns that had missing rows were handled by replacing the missing values with the mean of those columns. The data that is available is sufficient to conduct a meaningful analysis, but one factor that might influence Clinton and Obama's votes are any other parties that may win in some Countys. It is possible that someone besides Clinton and Obama may win in another County, so having information about other votes would improve the analysis.  (medicare vs medicarerate, socialsecutiry vs socialsecutiryrate, disabilities vs disabilityrate ??). 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="", fig.width=9, fig.height=3.2}
+
+library(dplyr)
+library(knitr)
+# install.packages("kableExtra")
+library(kableExtra)
+
+variables <- c("County", "State", "Region", "FIPS", "ElectionDate", "ElectionType", "TotalVote" ,"Clinton", "Obama", "MalesPer100Females", "AgeBelow35", "Age35to65", "Age65andAbove", "White", "Black", "Asian", "AmericanIndian", "Hawaiian", "Hispanic", "HighSchool", "Bachelors", "Poverty", "IncomeAbove75K", "MedianIncome", "AverageIncome", "UnemployRate", "ManfEmploy", "SpeakingNonEnglish", "Medicare", "MedicareRate", "SocialSecurity", "SocialSecurityRate", "RetiredWorkers", "Disabilities", "DisabilitiesRate", "Homeowner", "SameHouse1995and2000", "Pop", "PopDensity", "LandArea", "FarmArea")
+
+variables_descrip <- c("County Name", "State Code", "Region Name", "Federal Information Processing Standards", "Election Date", "Election Type", "Total Votes", "Clinton's Votes", "Obama's Votes", "Percentage of Males", "Percentage below 35 years of age", "Percentage between 35 and 65 years of age", "Percentage above 65 years of age", "Percentage White Individuals", "Percentage of Black Individuals", "Percentage of Asian Individuals", "Percentage of American Indian Individuals", "Percentage of Hawaiian Individuals", "Percentage of Hispanic Individuals", "Percentage with a Highschool Diploma", "Percentage with a Bachelors  Degree", "Percentage in Poverty", "Percentage with Income Above 75K", "Median Income of County", "Average Income of County", "Unemployment Rate", " ", "Percentage Speaking Non-English", "Number of those with Medicare", "Medicare Rate", "Number of those with Social Security", "Social Security Rate", "Number of Retired Workers", "Number with Disabilities", "Disabilities Rate", "Percentage who are Homeowners", "Percentage in the same house in 2000 as 1995", "Population", "Population Density", "Land Area of County", "Farm Area in County")
+
+df <- data.frame(variables, variables_descrip)
+
+df %>% select(variables, variables_descrip) %>%
+  kable(
+    col.names=c("Variable", "Variable Description"),
+    linesep = "", digits = 2, booktabs=TRUE) %>%
+  kable_styling(latex_options = "HOLD_position", font_size = 10)
+```
+
+```{r}
+
+# Read Data into R
+setwd("~/Desktop/Fall 2022 MMA/MGTA 601/a1")
+clinton_obama <- read.csv("Clinton-Obama.csv")
+
+# Next use the function summary to find out the number of missing data points in the demographic/county columns. The missing data points are listed as number of NA's under the respective columns.
+summary(clinton_obama)
+```
+
+```{r}
+
+# Get the structure of the data
+str(clinton_obama)
+```
+
+
+```{r}
+
+# Correctly identify categorical variables as such
+clinton_obama$County <- as.factor(clinton_obama$County)
+clinton_obama$State <- as.factor(clinton_obama$State)
+clinton_obama$Region <- as.factor(clinton_obama$Region)
+clinton_obama$ElectionType <- as.factor(clinton_obama$ElectionType)
+str(clinton_obama)
+```
+
+### Missing data
+
+```{r}
+
+meanBlack <- mean(clinton_obama$Black[!is.na(clinton_obama$Black)])
+clinton_obama$Black <- clinton_obama$Black
+clinton_obama$Black[is.na(clinton_obama$Black)] <- meanBlack
+
+meanAsian <- mean(clinton_obama$Asian[!is.na(clinton_obama$Asian)])
+clinton_obama$Asian <- clinton_obama$Asian
+clinton_obama$Asian[is.na(clinton_obama$Asian)] <- meanAsian
+
+meanAmericanIndian <- mean(clinton_obama$AmericanIndian[!is.na(clinton_obama$AmericanIndian)])
+clinton_obama$AmericanIndian <- clinton_obama$AmericanIndian
+clinton_obama$AmericanIndian[is.na(clinton_obama$AmericanIndian)] <- meanAmericanIndian
+
+meanHighSchool <- mean(clinton_obama$HighSchool[!is.na(clinton_obama$HighSchool)])
+clinton_obama$HighSchool <- clinton_obama$HighSchool
+clinton_obama$HighSchool[is.na(clinton_obama$HighSchool)] <- meanHighSchool
+
+meanBachelors <- mean(clinton_obama$Bachelors[!is.na(clinton_obama$Bachelors)])
+clinton_obama$Bachelors <- clinton_obama$Bachelors
+clinton_obama$Bachelors[is.na(clinton_obama$Bachelors)] <- meanBachelors
+
+meanPoverty <- mean(clinton_obama$Poverty[!is.na(clinton_obama$Poverty)])
+clinton_obama$Poverty <- clinton_obama$Poverty
+clinton_obama$Poverty[is.na(clinton_obama$Poverty)] <- meanPoverty
+
+meanIncomeAbove75K <- mean(clinton_obama$IncomeAbove75K[!is.na(clinton_obama$IncomeAbove75K)])
+clinton_obama$IncomeAbove75K <- clinton_obama$IncomeAbove75K
+clinton_obama$IncomeAbove75K[is.na(clinton_obama$IncomeAbove75K)] <- meanIncomeAbove75K
+
+meanMedianIncome <- mean(clinton_obama$MedianIncome[!is.na(clinton_obama$MedianIncome)])
+clinton_obama$MedianIncome <- clinton_obama$MedianIncome
+clinton_obama$MedianIncome[is.na(clinton_obama$MedianIncome)] <- meanMedianIncome
+
+meanAverageIncome <- mean(clinton_obama$AverageIncome[!is.na(clinton_obama$AverageIncome)])
+clinton_obama$AverageIncome <- clinton_obama$AverageIncome
+clinton_obama$AverageIncome[is.na(clinton_obama$AverageIncome)] <- meanAverageIncome
+
+meanUnemployRate <- mean(clinton_obama$UnemployRate[!is.na(clinton_obama$UnemployRate)])
+clinton_obama$UnemployRate <- clinton_obama$UnemployRate
+clinton_obama$UnemployRate[is.na(clinton_obama$UnemployRate)] <- meanUnemployRate
+
+meanManfEmploy <- mean(clinton_obama$ManfEmploy[!is.na(clinton_obama$ManfEmploy)])
+clinton_obama$ManfEmploy <- clinton_obama$ManfEmploy
+clinton_obama$ManfEmploy[is.na(clinton_obama$ManfEmploy)] <- meanManfEmploy
+
+meanSpeakingNonEnglish <- mean(clinton_obama$SpeakingNonEnglish[!is.na(clinton_obama$SpeakingNonEnglish)])
+clinton_obama$SpeakingNonEnglish <- clinton_obama$SpeakingNonEnglish
+clinton_obama$SpeakingNonEnglish[is.na(clinton_obama$SpeakingNonEnglish)] <- meanSpeakingNonEnglish
+
+meanMedicare <- mean(clinton_obama$Medicare[!is.na(clinton_obama$Medicare)])
+clinton_obama$Medicare <- clinton_obama$Medicare
+clinton_obama$Medicare[is.na(clinton_obama$Medicare)] <- meanMedicare
+
+meanMedicareRate <- mean(clinton_obama$MedicareRate[!is.na(clinton_obama$MedicareRate)])
+clinton_obama$MedicareRate <- clinton_obama$MedicareRate
+clinton_obama$MedicareRate[is.na(clinton_obama$MedicareRate)] <- meanMedicareRate
+
+meanSocialSecurity <- mean(clinton_obama$SocialSecurity[!is.na(clinton_obama$SocialSecurity)])
+clinton_obama$SocialSecurity <- clinton_obama$SocialSecurity
+clinton_obama$SocialSecurity[is.na(clinton_obama$SocialSecurity)] <- meanSocialSecurity
+
+meanSocialSecurityRate <- mean(clinton_obama$SocialSecurityRate[!is.na(clinton_obama$SocialSecurityRate)])
+clinton_obama$SocialSecurityRate <- clinton_obama$SocialSecurityRate
+clinton_obama$SocialSecurityRate[is.na(clinton_obama$SocialSecurity)] <- meanSocialSecurityRate
+
+meanRetiredWorkers <- mean(clinton_obama$RetiredWorkers[!is.na(clinton_obama$RetiredWorkers)])
+clinton_obama$RetiredWorkers <- clinton_obama$RetiredWorkers
+clinton_obama$RetiredWorkers[is.na(clinton_obama$RetiredWorkers)] <- meanRetiredWorkers
+
+meanDisabilities <- mean(clinton_obama$Disabilities[!is.na(clinton_obama$Disabilities)])
+clinton_obama$Disabilities <- clinton_obama$Disabilities
+clinton_obama$Disabilities[is.na(clinton_obama$Disabilities)] <- meanDisabilities
+
+meanDisabilitiesRate <- mean(clinton_obama$DisabilitiesRate[!is.na(clinton_obama$DisabilitiesRate)])
+clinton_obama$DisabilitiesRate <- clinton_obama$DisabilitiesRate
+clinton_obama$DisabilitiesRate[is.na(clinton_obama$Disabilities)] <- meanDisabilitiesRate
+
+meanHomeowner <- mean(clinton_obama$Homeowner[!is.na(clinton_obama$Homeowner)])
+clinton_obama$Homeowner <- clinton_obama$Homeowner
+clinton_obama$Homeowner[is.na(clinton_obama$Homeowner)] <- meanHomeowner
+
+meanSameHouse1995and2000 <- mean(clinton_obama$SameHouse1995and2000[!is.na(clinton_obama$SameHouse1995and2000)])
+clinton_obama$SameHouse1995and2000 <- clinton_obama$SameHouse1995and2000
+clinton_obama$SameHouse1995and2000[is.na(clinton_obama$SameHouse1995and2000)] <- meanSameHouse1995and2000
+
+meanLandArea <- mean(clinton_obama$LandArea[!is.na(clinton_obama$LandArea)])
+clinton_obama$LandArea <- clinton_obama$LandArea
+clinton_obama$LandArea[is.na(clinton_obama$LandArea)] <- meanLandArea
+
+meanFarmArea <- mean(clinton_obama$FarmArea[!is.na(clinton_obama$FarmArea)])
+clinton_obama$FarmArea <- clinton_obama$FarmArea
+clinton_obama$FarmArea[is.na(clinton_obama$FarmArea)] <- meanFarmArea
+```
+
+
+```{r}
+summary(clinton_obama)
+```
+
+
+## Analysis
+
+
+### Independent vars
+
+```{r}
+# Create some possible independent variables (things we might like to predict in a regression using the demographic information). These variables directly become a part of our data set clinton_obama_train. You can use the command names(clinton_obama_train) to see that these are added as columns in our data set.
+clinton_obama$Obama_margin <- clinton_obama$Obama - clinton_obama$Clinton
+clinton_obama$Obama_margin_percent <- clinton_obama$Obama_margin/clinton_obama$TotalVote
+clinton_obama$Obama_wins <- ifelse(clinton_obama$Obama_margin >0, 1,0)
+names(clinton_obama)
+```
+
+
+```{r}
+table(clinton_obama$Obama_wins)
+percent_Clin <- 913/(913+824)*100
+percent_Obama <- 824/(824+913)*100
+
+percent_Clin
+percent_Obama
+```
+
+### Training, test, validation sets
+
+```{r}
+# Partition Data - counties that have voted = Training, counties that have not voted = Test 
+set.seed(1)
+
+voted <- which(!is.na(clinton_obama$TotalVote))
+train.df <- clinton_obama[voted, ]
+test.df <- clinton_obama[-voted, ]
+
+# training 60% and validation 40%
+train_index <- sample(c(1:dim(train.df)[1]), round(dim(train.df)[1]*0.6))
+train.df <- train.df[train_index, ]
+valid.df <- train.df[-train_index, ]
+```
+
+## Predicting who will win
+
+### Logistic Regresion
+
+```{r}
+options(scipen=999)
+clinton_obama.glm <- glm(Obama_wins ~ .-County -State -ElectionDate -TotalVote -Clinton -Obama -FIPS -Obama_margin_percent -Obama_margin, data = train.df, family = 'binomial', trace=0) 
+summary(clinton_obama.glm)
+```
+
+##### Double check for NAs
+
+```{r}
+summary(train.df)
+```
+
+
+#### Stepwise selection
+
+```{r}
+clinton_obama_step.glm <- step(clinton_obama.glm, direction="both", trace=0)
+summary(clinton_obama_step.glm)
+```
+
+#### Backward selection
+
+```{r}
+clinton_obama_back.glm  <- step(clinton_obama.glm, direction="backward",  trace=0)
+summary(clinton_obama_back.glm)
+```
+
+#### Forward selection
+
+```{r}
+clinton_obama_for.glm  <- step(clinton_obama.glm, direction =
+"forward",  trace=0)
+summary(clinton_obama_for.glm)
+```
+##### Accuracy 
+
+```{r}
+logit.valid.pred <- predict(clinton_obama_step.glm, valid.df, type = "response")
+logit.valid.fit <- ifelse(logit.valid.pred >0.5,"1","0")
+
+library(caret)
+confusionMatrix(as.factor(logit.valid.fit), as.factor(valid.df$Obama_wins))
+```
+
+```{r}
+library(pROC)
+test_roc = roc(ifelse(valid.df$Obama_wins=="1",1,0) ~ 
+                 ifelse(logit.valid.fit=="1",1,0), plot = TRUE, print.auc = TRUE)
+
+auc(test_roc)
+```
+
+#### so who wins
+
+```{r}
+forecast.Obama_wins <- predict(clinton_obama_step.glm,newdata=test.df,type = "response")
+test.df$Obama_win_probability <- forecast.Obama_wins
+
+forecast.Obama_wins<- ifelse(forecast.Obama_wins >0.5,"1","0")
+test.df$Obama_wins <- forecast.Obama_wins
+
+valid.df$Obama_win_probability <- valid.df$Obama_margin_percent
+train.df$Obama_win_probability <- train.df$Obama_margin_percent
+
+clinton_obama_predicted <- rbind(valid.df, test.df, train.df)
+
+library(dplyr)
+
+clinton_obama_predicted  %>%
+  filter(Obama_wins == 1) %>%
+  count(Obama_wins)
+
+2868 - 1028
+# 1840
+```
+
+
+### Classification tree
+
+```{r}
+library(rpart)
+#install.packages("rpart")
+# install.packages("rpart.plot")
+library(rpart.plot)
+
+clinton_obama.ct <- rpart(Obama_wins ~ .-County -State -ElectionDate -TotalVote -Clinton -Obama -FIPS -Obama_margin_percent -Obama_margin, data = train.df, method = 'class') 
+length(clinton_obama.ct$frame$var[clinton_obama.ct$frame$var == "<leaf>"])
+#summary(clinton_obama.ct)
+prp(clinton_obama.ct, type = 2, extra = 1, under = TRUE, split.font = 1, varlen = -10,  box.palette=c("pink", "blue"))
+```
+
+#### Accuracy
+
+```{r}
+library(caret)
+clinton_obama.ct.predict <- predict(clinton_obama.ct,valid.df, type = "class")
+confusionMatrix(as.factor(clinton_obama.ct.predict), as.factor(valid.df$Obama_wins))
+```
+```{r}
+library(pROC)
+test_roc = roc(ifelse(valid.df$Obama_wins=="1",1,0) ~ 
+                 ifelse(clinton_obama.ct.predict=="1",1,0), plot = TRUE, print.auc = TRUE)
+
+auc(test_roc)
+```
+## Predicting the margin
+
+```{r}
+options(scipen=999)
+clinton_obama.lm <- lm(Obama_margin_percent ~ .-County -State -ElectionDate -TotalVote -Clinton -Obama -FIPS -Obama_margin -Obama_wins, data = train.df) 
+summary(clinton_obama.lm)
+```
+
+
+#### Stepwise selection
+
+```{r}
+clinton_obama_step.lm <- step(clinton_obama.lm, direction="both", trace=0)
+summary(clinton_obama_step.lm)
+```
+
+#### Backward selection
+
+```{r}
+clinton_obama_back.lm  <- step(clinton_obama.lm, direction="backward",  trace=0)
+summary(clinton_obama_back.lm)
+```
+
+#### Forward selection
+
+```{r}
+clinton_obama_for.lm  <- step(clinton_obama.lm, direction =
+"forward",  trace=0)
+summary(clinton_obama_for.lm)
+```
+
+#### Stepwise model fit
+
+```{r}
+qqnorm(resid(clinton_obama_step.lm))
+qqnorm(rstandard(clinton_obama_step.lm))
+plot(fitted(clinton_obama_step.lm),rstandard(clinton_obama_step.lm))
+```
+
+#### Accuracy
+
+```{r}
+library(forecast)
+valid_predict <- predict(clinton_obama_step.lm, valid.df)
+accuracy(valid_predict, valid.df$Obama_margin_percent)
+```
+
+### Regression Tree
+
+```{r}
+library(dplyr)
+clinton_obama_RT <- select(train.df, -County, -State, -ElectionDate, -TotalVote, -Clinton, -Obama, -FIPS, -Obama_margin, -Obama_wins)
+
+library(rpart)
+clinton_obama_reg_tree <- rpart(Obama_margin_percent ~ ., data=clinton_obama_RT)
+print(clinton_obama_reg_tree)
+plot(clinton_obama_reg_tree)
+text(clinton_obama_reg_tree, use.n=TRUE, cex=0.5)
+```
+#### Accuracy
+
+
+```{r}
+RT_obama <- ifelse(predict(clinton_obama_reg_tree,valid.df) >0, 1,0)
+confusionMatrix(as.factor(RT_obama), as.factor(valid.df$Obama_wins))
+library(pROC)
+test_roc <- roc(ifelse(valid.df$Obama_wins=="1",1,0) ~ 
+                 ifelse(RT_obama=="1",1,0), plot = TRUE, print.auc = TRUE)
+
+auc(test_roc)
+```
+#### so who wins
+
+```{r}
+test.df$Obama_wins <- as.numeric(test.df$Obama_wins)
+Obama_MP_pred <- predict(clinton_obama_step.lm, test.df)
+
+test.df$Obama_margin_percent <- Obama_MP_pred
+
+summary(test.df)
+```
+
