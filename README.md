@@ -36,5 +36,5 @@ Happy coding!
 
 Sarah Mansoor
 sarah.a.mansoor@gmail.com
-[[Your LinkedIn Profile]  ](https://www.linkedin.com/in/sarahmansoor/)https://www.linkedin.com/in/sarahmansoor/
-[[Your Personal Website/Blog]  ](https://sarahamansoor.wixsite.com/website)https://sarahamansoor.wixsite.com/website
+[[[Your LinkedIn Profile] ](https://www.linkedin.com/in/sarahmansoor/)]
+[[[Your Personal Website/Blog]](https://sarahamansoor.wixsite.com/website)]
