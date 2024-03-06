@@ -35,6 +35,9 @@ Thank you for taking the time to explore my portfolio! If you have any questions
 Happy coding!
 
 Sarah Mansoor
+
 sarah.a.mansoor@gmail.com
-[[[Your LinkedIn Profile] ](https://www.linkedin.com/in/sarahmansoor/)]
-[[[Your Personal Website/Blog]](https://sarahamansoor.wixsite.com/website)]
+
+[[[My LinkedIn Profile] ](https://www.linkedin.com/in/sarahmansoor/)]
+
+[[[My Personal Website]](https://sarahamansoor.wixsite.com/website)]
