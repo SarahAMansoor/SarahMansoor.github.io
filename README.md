@@ -27,10 +27,10 @@ Delve into my Master's journey at Wilfrid Laurier University, where I honed my s
 As a Graduate Research Assistant, I delved deep into the realm of energy market predictions. Explore the projects where I applied advanced analytics techniques to forecast market trends and optimize energy resource allocation.
 
 ### Summer Undergraduate Data Science, Data Sciences Institute, University of Toronto
-#### Disparities in Climate-Induced Health Outcomes in the Greater Toronto Area
+- **Research Focus**: Investigated the disparities in climate-induced health outcomes in the Greater Toronto Area.
 
 ### Summer Undergraduate Research Fair - Undergraduate Research Assistant, University of Toronto
-#### Statistics Students' Perception of Including a Course Project on Their Attitudes Towards Statistics
+- **Research Focus**: Investigated statistics students' perception of including a course project on their attitudes towards statistics.
 
 ## Personal Projects
 Last but not least, peek into my personal projects folder, where I unleash my creativity and explore niche interests. From pet projects to experimental endeavors, these projects reflect my curiosity-driven approach to problem-solving.
