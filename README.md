@@ -38,6 +38,6 @@ Sarah Mansoor
 
 sarah.a.mansoor@gmail.com
 
-[[[My LinkedIn Profile] ](https://www.linkedin.com/in/sarahmansoor/)]
+[[My LinkedIn Profile]](https://www.linkedin.com/in/sarahmansoor/)
 
-[[[My Personal Website]](https://sarahamansoor.wixsite.com/website)]
+[[My Personal Website]](https://sarahamansoor.wixsite.com/website)
