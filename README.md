@@ -1,4 +1,4 @@
-# Portfolio of Sarah Mansoor
+# Sarah Mansoor
 
 Welcome to my GitHub portfolio! Here, you'll find a collection of projects that reflect my journey through academia and beyond, blending mathematics, statistics, computation, and data science into real-world solutions. From my Bachelor's degree at the University of Toronto to my Master's journey at Wilfrid Laurier University, and various research and professional experiences in between, each project encapsulates a unique facet of my passion for problem-solving and innovation.
 
