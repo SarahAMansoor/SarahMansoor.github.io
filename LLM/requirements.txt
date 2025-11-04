@@ -1,0 +1,6 @@
+# Required packages for the LLM project
+requests
+pymupdf
+tqdm
+pandas
+spacy
